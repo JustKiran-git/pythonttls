@@ -1,0 +1,140 @@
+SELECT UPPER(first_name) AS first_name
+FROM Worker;
+
+SELECT DISTINCT department
+FROM worker;
+
+SELECT SUBSTR(FIRST_NAME, 1, 3) AS first_three_chars
+FROM Worker;
+
+SELECT INSTR(FIRST_NAME, 'a') AS position_of_a
+FROM Worker
+WHERE FIRST_NAME = 'Amitabh';
+
+SELECT DEPARTMENT, LENGTH(DEPARTMENT) AS department_length
+FROM (
+  SELECT DISTINCT DEPARTMENT
+  FROM Worker
+) AS unique_departments;
+
+SELECT *
+FROM Worker
+ORDER BY FIRST_NAME ASC, DEPARTMENT DESC;
+
+SELECT *
+FROM Worker
+WHERE FIRST_NAME = 'Vipul' OR FIRST_NAME = 'Satish';
+
+SELECT *
+FROM Worker
+WHERE FIRST_NAME LIKE '%a%';
+
+SELECT *
+FROM Worker
+WHERE FIRST_NAME LIKE '%h' AND LENGTH(FIRST_NAME) = 6;
+
+SELECT *
+FROM Worker
+WHERE SALARY BETWEEN 100000 AND 500000;
+
+SELECT *
+FROM Worker
+WHERE MONTH(JOINING_DATE) = 2 AND YEAR(JOINING_DATE) = 2014;
+
+SELECT DEPARTMENT, COUNT(*) AS EmployeeCount
+FROM Worker
+WHERE DEPARTMENT = 'Admin';
+
+SELECT DEPARTMENT, COUNT(*) AS WorkerCount
+FROM Worker
+GROUP BY DEPARTMENT
+ORDER BY WorkerCount DESC;
+
+SELECT *
+FROM Worker
+WHERE WORKER_ID IN (
+    SELECT WORKER_REF_ID
+    FROM Title
+    WHERE WORKER_TITLE = 'Manager');
+    
+SELECT WORKER_REF_ID, WORKER_TITLE, AFFECTED_FROM, COUNT(*)
+FROM Title
+GROUP BY WORKER_REF_ID, WORKER_TITLE, AFFECTED_FROM
+HAVING COUNT(*) > 1;
+
+SELECT FIRST_NAME, LAST_NAME, 
+       (SELECT BONUS_AMOUNT 
+        FROM Bonus 
+        WHERE WORKER_REF_ID = Worker.WORKER_ID
+        LIMIT 1) AS BONUS_AMOUNT
+FROM Worker
+WHERE WORKER_ID IN (
+    SELECT WORKER_REF_ID
+    FROM Bonus
+);
+
+SELECT *
+FROM worker
+WHERE worker_id NOT IN (
+  SELECT WORKER_REF_ID
+  FROM bonus
+);
+
+SELECT DISTINCT salary
+FROM Worker
+ORDER BY salary DESC
+LIMIT 2;
+
+SELECT MAX(salary) AS second_highest_salary
+FROM Worker
+WHERE salary < (
+  SELECT MAX(salary)
+  FROM Worker
+);
+
+SELECT name, salary
+FROM Worker
+WHERE salary IN (
+  SELECT salary
+  FROM Worker
+  GROUP BY salary
+  HAVING COUNT(*) > 1
+);
+
+SELECT e.*
+FROM Worker e
+WHERE WORKER_ID <= (
+  SELECT COUNT(*) / 2
+  FROM Worker
+);
+
+SELECT department
+FROM worker
+GROUP BY department
+HAVING COUNT(*) > 3;
+
+SELECT * FROM worker WHERE WORKER_ID IN ((SELECT MIN(WORKER_ID) FROM worker), (SELECT MAX(WORKER_ID) FROM worker));
+
+SELECT *
+FROM worker
+ORDER BY WORKER_ID DESC
+LIMIT 5;
+
+SELECT *
+FROM Worker w1
+WHERE SALARY = (
+    SELECT MAX(SALARY)
+    FROM Worker w2
+    WHERE w1.DEPARTMENT = w2.DEPARTMENT
+);
+
+SELECT department, SUM(salary) AS total_salary
+FROM worker
+GROUP BY department;
+
+SELECT FIRST_NAME,LAST_NAME
+FROM worker
+WHERE salary = (
+  SELECT MAX(salary)
+  FROM worker
+);
